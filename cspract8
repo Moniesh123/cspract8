@@ -1,0 +1,165 @@
+enable secret enpa55
+line console 0
+password conpa55
+login
+
+ip domain-name ccnasecurity.com
+username admin secret adminpa55
+line vty 0 4
+login local
+crypto key generate rsa
+
+part2:
+show vlan brief
+
+vlan 5
+exit
+vlan 10
+exit
+vlan 15
+exit
+
+show vlan brief
+
+int fa0/2
+switchport mode access
+switchport access vlan 10
+
+int fa0/3
+switchport mode access
+switchport access vlan 10
+
+int fa0/4
+switchport mode access
+switchport access vlan 5
+
+int fa0/1
+switchport mode access
+switchport access vlan 5
+
+int fa0/2
+switchport mode access
+switchport access vlan 5
+
+int fa0/3
+switchport mode access
+switchport access vlan 5
+
+int fa0/4
+switchport mode access
+switchport access vlan 10
+
+SWA/SWB
+show vlan brief
+
+SWA/SWB/SW1/SW2
+int fa0/24
+switchport mode trunk
+switchport trunk native vlan 15
+
+SW1/SW2
+int gig0/1
+switchport mode trunk
+switchport trunk native vlan 15
+
+central
+int range gig0/1-2
+switchport mode trunk
+switchport trunk native vlan 15
+
+central
+int fa0/1
+switchport mode trunk
+switchport trunk native vlan 15
+
+central
+show int trunk
+
+SW1/2
+show int trunk
+
+SWA/B
+show int trunk
+
+R1
+int gig0/0.1
+encapsulation dot1q 5
+ip address 192.168.5.100 255.255.255.0
+
+int gig0/0.2
+encapsulation dot1q 10
+ip address 192.168.10.100 255.255.255.0
+int gig0/0.15
+encapsulation dot1q 15
+ip address 192.168.15.100 255.255.255.0
+
+part3 
+ping 192.168.10.2
+ping 192.168.5.2
+
+part 4
+step2:
+int fa0/23
+switchport mode trunk
+switchport trunk native vlan 15
+switchport nonegotiate
+
+show int trunk
+
+part5:
+vlan 20
+exit
+int vlan 20
+ip address 192.168.20.1 255.255.255.0
+
+vlan 20
+exit
+
+int vlan 20
+ip address 192.168.20.2 255.255.255.0
+
+int vlan 20
+ip address 192.168.20.3 255.255.255.0
+
+int vlan 20
+ip address 192.168.20.4 255.255.255.0
+
+int vlan 20
+ip address 192.168.20.5 255.255.255.0
+
+step4:
+int fa0/1
+switchport mode access
+switchport access vlan 20
+
+ping 192.168.20.1
+ping 192.168.20.2
+ping 192.168.20.3
+ping 192.168.20.4
+ping 192.168.20.5
+
+int gig0/0.3
+encapsulation dot1q
+ip address 192.168.20.100 255.255.255.0
+
+ping 192.168.20.100
+
+access-list 101 deny ip any 192.168.20.0
+access-list 101 permit ip any any 
+access-list 102 permit ip host 192.168.20.50 any
+
+int gig0/0.1
+ip access-group 101 in
+
+int gig0/0.2
+ip access-group 101 in
+line vty 0 4
+access class 102 in
+
+ssh -l admin 192.168.20.100
+
+ping 192.168.20.1
+ping 192.168.20.2
+ping 192.168.20.100
+ping 192.168.20.50
+
